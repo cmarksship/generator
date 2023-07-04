@@ -1,0 +1,20 @@
+# Spring
+spring:
+  cloud:
+    nacos:
+      discovery:
+        # 服务注册地址
+        server-addr: 192.168.0.105:8848
+        # 配置空间名
+        namespace: pz_dev
+      config:
+        # 配置中心地址
+        server-addr: 192.168.0.105:8848
+        # 配置文件格式
+        file-extension: yml
+        # 配置空间名
+        namespace: d5e35b7c-ce0c-4ae1-b85c-2026448c29e7
+        # 共享配置
+        shared-configs:
+          - data-id: ${spring.application.name}-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
+            refresh: true

@@ -1,0 +1,11 @@
+# Tomcat
+server:
+  port: 2001
+# Spring
+spring:
+  application:
+    # 应用名称
+    name: capital-auth
+  profiles:
+    # 环境配置
+    active: dev
