@@ -4,9 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.util.*;
-import com.github.common.utils.Response;
-import com.github.common.constant.CommonConstant;
-import com.github.common.utils.Query;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import cn.keeponline.common.base.ApiResult;
 import $!{package.Entity}.$!{entity};
 import $!{package.Service}.$!{entity}Service;
 #if(${restControllerStyle})
@@ -37,9 +36,9 @@ class ${table.controllerName}#if(${superControllerClass}) : ${superControllerCla
 
 #else
     #if(${superControllerClass})
-    public class ${table.controllerName} extends ${superControllerClass} {
+public class ${table.controllerName} extends ${superControllerClass} {
     #else
-    public class ${table.controllerName} {
+public class ${table.controllerName} {
     #end
 
 @Autowired
@@ -49,53 +48,50 @@ private $!{entity}Service $!{table.entityPath}Service;
  * 通过ID查询$!{table.comment}
  *
  * @param id ID
- * @return com.github.common.utils.Response
  */
 @GetMapping("/{id}")
-public Response get(@PathVariable Long id) {
+public ApiResult<$!{entity}> get(@PathVariable Long id) {
         if (id == null){
-        return Response.errorResponse("ID不能为空");
+            return ApiResult.fail("ID不能为空");
+        } else {
+            return ApiResult.success(this.$!{table.entityPath}Service.getById(id));
         }
-        return Response.success(this.$!{table.entityPath}Service.getById(id));
-        }
+    }
 
 
 /**
  * 分页查询$!{table.comment}
  *
  * @param params
- * @return com.github.common.utils.Response
  */
 @RequestMapping("/page")
-public Response page(@RequestParam Map<String, Object> params, $!{entity} $!{table.entityPath}) {
-        return Response.success(this.$!{table.entityPath}Service.page(new Query<$!{entity}>().getPage(params), new QueryWrapper<$!{entity}>()
-        .eq(CommonConstant.IS_DELETE, CommonConstant.INT_STATUS_NORMAL)));
+public ApiResult page(@RequestParam Map<String, Object> params, $!{entity} $!{table.entityPath}) {
+            return ApiResult.success(this.$!{table.entityPath}Service.page(new Page<$!{entity}>(1, 10), new QueryWrapper<$!{entity}>());
         }
 
 /**
  * 添加$!{table.comment}
  * @param  $!{table.entityPath}  实体
- * @return com.github.common.utils.Response<$!{entity}>
  */
 @PostMapping("/add")
-public Response add(@RequestBody $!{entity} $!{table.entityPath}) {
+public ApiResult add(@RequestBody $!{entity} $!{table.entityPath}) {
         //TODO 添加数据校验
         boolean res = this.$!{table.entityPath}Service.save($!{table.entityPath});
         if (res){
-        return Response.successResponse("操作成功");
+            return ApiResult.success("操作成功");
+        } else {
+            return ApiResult.fail("操作失败");
         }
-        return Response.errorResponse("操作失败");
-        }
+    }
 
 /**
  * 删除$!{table.comment}
  * @param id ID
- * @return com.github.common.utils.Response<$!{entity}>
  */
 @DeleteMapping("/{id}")
-public Response delete(@PathVariable Long id) {
+public ApiResult delete(@PathVariable Long id) {
         if (id == null){
-        return Response.errorResponse("ID不能为空");
+            return ApiResult.fail("ID不能为空");
         }
     $!{entity} $!{table.entityPath} = new $!{entity}();
     $!{table.entityPath}.setId(id);
@@ -103,29 +99,30 @@ public Response delete(@PathVariable Long id) {
     $!{table.entityPath}.setIsDelete(CommonConstant.INT_STATUS_DEL);
         boolean res = this.$!{table.entityPath}Service.updateById($!{table.entityPath});
         if (res){
-        return Response.successResponse("操作成功");
+            return ApiResult.success("操作成功");
+        } else {
+            return ApiResult.fail("操作失败");
         }
-        return Response.errorResponse("操作失败");
-        }
+    }
 
 /**
  * 编辑$!{table.comment}
  * @param  $!{table.entityPath}  实体
- * @return com.github.common.utils.Response<$!{entity}>
  */
 @PutMapping("/edit")
-public Response edit(@RequestBody $!{entity} $!{table.entityPath}) {
+public ApiResult edit(@RequestBody $!{entity} $!{table.entityPath}) {
         if ($!{table.entityPath}.getId() == null){
-        return Response.errorResponse("ID不能为空");
+            return ApiResult.fail("ID不能为空");
         }
         //TODO 添加数据校验
     $!{table.entityPath}.setUpdateTime(new Date());
         boolean res = this.$!{table.entityPath}Service.updateById($!{table.entityPath});
         if (res){
-        return Response.successResponse("操作成功");
-        }
-        return Response.errorResponse("操作失败");
+            return ApiResult.success("操作成功");
+        } else {
+            return ApiResult.fail("操作失败");
         }
 
         }
+}
 #end
