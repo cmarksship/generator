@@ -66,7 +66,7 @@ public ApiResult<$!{entity}> get(@PathVariable Long id) {
  */
 @RequestMapping("/page")
 public ApiResult page(@RequestParam Map<String, Object> params, $!{entity} $!{table.entityPath}) {
-            return ApiResult.success(this.$!{table.entityPath}Service.page(new Page<$!{entity}>(1, 10), new QueryWrapper<$!{entity}>());
+            return ApiResult.success(this.$!{table.entityPath}Service.page(new Page<$!{entity}>(1, 10), new QueryWrapper<$!{entity}>()));
         }
 
 /**
@@ -93,11 +93,7 @@ public ApiResult delete(@PathVariable Long id) {
         if (id == null){
             return ApiResult.fail("ID不能为空");
         }
-    $!{entity} $!{table.entityPath} = new $!{entity}();
-    $!{table.entityPath}.setId(id);
-    $!{table.entityPath}.setUpdateTime(new Date());
-    $!{table.entityPath}.setIsDelete(CommonConstant.INT_STATUS_DEL);
-        boolean res = this.$!{table.entityPath}Service.updateById($!{table.entityPath});
+        boolean res = this.$!{table.entityPath}Service.removeById(id);
         if (res){
             return ApiResult.success("操作成功");
         } else {
@@ -115,7 +111,6 @@ public ApiResult edit(@RequestBody $!{entity} $!{table.entityPath}) {
             return ApiResult.fail("ID不能为空");
         }
         //TODO 添加数据校验
-    $!{table.entityPath}.setUpdateTime(new Date());
         boolean res = this.$!{table.entityPath}Service.updateById($!{table.entityPath});
         if (res){
             return ApiResult.success("操作成功");
